@@ -15,7 +15,7 @@ Stroke-based Skribbl.io bot, powered by [Sketch-RNN](https://github.com/magenta/
 ## Installation
 1. Clone this repository:
     ```
-    git clone https://github.com/JeffreyCA/Skribbl.io-Bot.git
+    git clone https://github.com/JeffreyCA/Skribbl-RNN.git
     ```
 
 2. Create virtual environment:
