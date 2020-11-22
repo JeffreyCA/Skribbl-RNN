@@ -1,11 +1,12 @@
 aiohttp==3.7.3
 async-timeout==3.0.1
 attrs==20.3.0
+bresenham==0.2.1
 certifi==2020.11.8
 chardet==3.0.4
 idna==2.10
 multidict==5.0.2
-numpy==1.19.4
+numpy==1.18.5
 python-engineio==3.13.2
 python-socketio==4.6.0
 requests==2.25.0
