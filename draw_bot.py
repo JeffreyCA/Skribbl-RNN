@@ -283,8 +283,8 @@ def draw_strokes(data, factor=0.2, padding=50):
         local_x = vertices[idx][0]
         local_y = vertices[idx][1]
         # Convert local coordinates to canvas coordinates
-        abs_x = round(local_x * scale_width + HALF_CANVAS_WIDTH)
-        abs_y = round(local_y * scale_height + HALF_CANVAS_HEIGHT)
+        abs_x = int(round(local_x * scale_width + HALF_CANVAS_WIDTH))
+        abs_y = int(round(local_y * scale_height + HALF_CANVAS_HEIGHT))
         # vertices[idx][0] = abs_x
         # vertices[idx][1] = abs_y
         buffer.append((abs_x, abs_y))
