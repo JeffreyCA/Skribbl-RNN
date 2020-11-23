@@ -24,25 +24,25 @@ tf.compat.v1.disable_eager_execution()
 
 SETTINGS = {
     'data_dir': 'data',
-    'model_dir': 'models/4.0',
+    'model_dir': 'models/1.0',
     'categories': ['apple', 'bus', 'calculator', 'donut', 'power outlet', 'table'],
     'host': 'wss://server3.skribbl.io:5003',
-    'join': '',
+    'avatar': [9, 24, 16, -1],
+    'name': 'Skribbl-RNN',
     'language': 'English',
-    'connecting': False,
     'temperature': 0.01
 }
 
 USER_DATA = {
-    'avatar': [9, 24, 16, -1],
+    'avatar': SETTINGS['avatar'],
     'code': '',
     'createPrivate': True,
     'join': '',
-    'language': 'English',
-    'name': 'Skribbl-RNN'
+    'language': SETTINGS['language'],
+    'name': SETTINGS['name']
 }
 
-GAME_DATA = {'died': False}
+GAME_DATA = {'connecting': False, 'died': False}
 
 COLOR = 1
 THICKNESS = 4
@@ -71,7 +71,7 @@ def on_lobbyConnected(data):
     """
     lobby_url = f"https://skribbl.io/?{data['key']}"
     print(f"Connected to lobby: {lobby_url}")
-    if not SETTINGS['join']:
+    if not USER_DATA['join']:
         webbrowser.open(lobby_url)
 
     # print(f"Round {data['round']} / {data['roundMax']}")
@@ -168,7 +168,7 @@ def on_kicked():
     GAME_DATA['died'] = True
 
     # Try to reconnect
-    GAME_DATA = {'died': False}
+    GAME_DATA = {'connecting': False, 'died': False}
     start_server()
 
 
@@ -188,9 +188,9 @@ def on_lobbyChooseWord(data):
 def on_result(data):
     SETTINGS['host'] = data['host']
     print('Host:', data['host'])
-    if SETTINGS['connecting']:
+    if GAME_DATA['connecting']:
         sio.disconnect()
-        SETTINGS['connecting'] = False
+        GAME_DATA['connecting'] = False
 
 
 @sio.on('lobbyPlayerDrawing')
@@ -397,14 +397,13 @@ if __name__ == '__main__':
                         help='Private game key')
     args = parser.parse_args()
 
-    SETTINGS['join'] = args.join
     USER_DATA['join'] = args.join
     USER_DATA['createPrivate'] = (args.join == '')
 
     init_rnn()
 
     if args.join != '':
-        SETTINGS['connecting'] = True
+        GAME_DATA['connecting'] = True
         login()
 
     start_server()

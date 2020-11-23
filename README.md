@@ -44,5 +44,29 @@ To join an existing private lobby:
 (env) $ python draw_bot.py --join <join key>
 ```
 
+## Configuration
+In `draw_bot.py`, you can modify the `SETTINGS` dict:
+
+```python
+SETTINGS = {
+    # Path to dataset .npz files
+    'data_dir': '',
+    # Path to Sketch-RNN model/checkpoint files
+    'model_dir': '',
+    # Names of categories (must match names of .npz in the data_dir)
+    'categories': [],
+    # Default skribbl.io server host to use for new games
+    'host': '',
+    # Avatar configuration (must be array of length 4)
+    'avatar': [],
+    # Bot name
+    'name': '',
+    # Game language
+    'language': '',
+    # Sketch-RNN temperature parameter (0 < temp <= 1.0)
+    'temperature': 0.01
+}
+```
+
 ## Original License
 [MIT](https://github.com/alekxeyuk/Skribbl.io-Bot/blob/master/LICENSE)
