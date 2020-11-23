@@ -127,7 +127,8 @@ def on_lobbyPlayerConnected(data):
     sio.emit("lobbySetDrawTime", "30")
     time.sleep(0.5)
     sio.emit("lobbySetCustomWordsExclusive", True)
-    time.sleep(0.5)
+    # Wait 10 seconds before starting game
+    time.sleep(10)
     sio.emit("lobbyGameStart", ','.join(SETTINGS['categories']))
 
 
