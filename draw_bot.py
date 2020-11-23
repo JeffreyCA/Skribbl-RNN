@@ -128,6 +128,7 @@ def on_lobbyPlayerConnected(data):
     time.sleep(0.5)
     sio.emit("lobbySetCustomWordsExclusive", True)
     # Wait 10 seconds before starting game
+    print('Starting in 10 seconds...')
     time.sleep(10)
     sio.emit("lobbyGameStart", ','.join(SETTINGS['categories']))
 
@@ -165,6 +166,10 @@ def on_kicked():
         'You either die a hero or you live long enough to see yourself become the villain'
     )
     GAME_DATA['died'] = True
+
+    # Try to reconnect
+    GAME_DATA = {'died': False}
+    start_server()
 
 
 @sio.on('lobbyChooseWord')
@@ -401,4 +406,5 @@ if __name__ == '__main__':
     if args.join != '':
         SETTINGS['connecting'] = True
         login()
+
     start_server()
