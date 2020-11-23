@@ -64,6 +64,7 @@ SETTINGS = {
     # Game language
     'language': '',
     # Sketch-RNN temperature parameter (0 < temp <= 1.0)
+    # Higher temperature = harder to identify drawings
     'temperature': 0.01
 }
 ```
