@@ -44,6 +44,9 @@ To join an existing private lobby:
 (env) $ python draw_bot.py --join <join key>
 ```
 
+(The join key is the string of characters that appear in the invite link.)
+
+
 ## Configuration
 In `draw_bot.py`, you can modify the `SETTINGS` dict:
 
