@@ -49,10 +49,17 @@ In `draw_bot.py`, you can modify the `SETTINGS` dict:
 
 ```python
 SETTINGS = {
+    # Whether to output socketio client logs
+    'debug': True,
     # Path to dataset .npz files
     'data_dir': '',
     # Path to Sketch-RNN model/checkpoint files
     'model_dir': '',
+    # Noise scale, should match the above model
+    'scale': 1.0,
+    # Sketch-RNN temperature parameter (0 < temp <= 1.0)
+    # Higher temperature = harder to identify drawings
+    'temperature': 0.01,
     # Names of categories (must match names of .npz in the data_dir)
     'categories': [],
     # Default skribbl.io server host to use for new games
@@ -62,10 +69,7 @@ SETTINGS = {
     # Bot name
     'name': '',
     # Game language
-    'language': '',
-    # Sketch-RNN temperature parameter (0 < temp <= 1.0)
-    # Higher temperature = harder to identify drawings
-    'temperature': 0.01
+    'language': ''
 }
 ```
 

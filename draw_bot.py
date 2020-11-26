@@ -23,14 +23,16 @@ from utils import *
 tf.compat.v1.disable_eager_execution()
 
 SETTINGS = {
+    'debug': True,
     'data_dir': 'data',
     'model_dir': 'models/1.0',
+    'scale': 1.0,
+    'temperature': 0.01,
     'categories': ['apple', 'bus', 'calculator', 'donut', 'power outlet', 'table'],
     'host': 'wss://server3.skribbl.io:5003',
     'avatar': [9, 24, 16, -1],
     'name': 'Skribbl-RNN',
-    'language': 'English',
-    'temperature': 0.01
+    'language': 'English'
 }
 
 USER_DATA = {
@@ -52,9 +54,10 @@ CANVAS_HEIGHT = 600
 HALF_CANVAS_WIDTH = CANVAS_WIDTH / 2
 HALF_CANVAS_HEIGHT = CANVAS_HEIGHT / 2
 
+# Length of line segments formed from Bresenham line algorithm
 PIXEL_SAMPLE = 5
 
-sio = socketio.Client(logger=False)
+sio = socketio.Client(logger=SETTINGS['debug'])
 global_sess = None
 global_envs = {}
 
@@ -330,9 +333,10 @@ def load_env_compatible(data_dir, model_dir, dataset: str, scale: float):
 def init_rnn():
     data_dir = SETTINGS['data_dir']
     model_dir = SETTINGS['model_dir']
+    scale = SETTINGS['scale']
     for category in SETTINGS['categories']:
         global_envs[category] = load_env_compatible(data_dir, model_dir,
-                                                    category, 1.0)
+                                                    category, scale)
 
 
 def sample_conditional(category):
