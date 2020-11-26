@@ -51,6 +51,8 @@ In `draw_bot.py`, you can modify the `SETTINGS` dict:
 SETTINGS = {
     # Whether to output socketio client logs
     'debug': True,
+    # Whether to 'guess' other players' drawings (by brute-force)
+    'guess': True,
     # Path to dataset .npz files
     'data_dir': '',
     # Path to Sketch-RNN model/checkpoint files

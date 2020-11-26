@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import string
+import subprocess
 import sys
 import time
 import webbrowser
@@ -12,6 +13,7 @@ from timeit import default_timer as timer
 import numpy as np
 import requests
 import socketio
+import svgwrite
 import tensorflow.compat.v1 as tf
 from bresenham import bresenham
 
@@ -23,7 +25,8 @@ from utils import *
 tf.compat.v1.disable_eager_execution()
 
 SETTINGS = {
-    'debug': True,
+    'debug': False,
+    'guess': False,
     'data_dir': 'data',
     'model_dir': 'models/1.0',
     'scale': 1.0,
@@ -60,6 +63,7 @@ PIXEL_SAMPLE = 5
 sio = socketio.Client(logger=SETTINGS['debug'])
 global_sess = None
 global_envs = {}
+global_counter = 1
 
 
 @sio.on('connect')
@@ -198,6 +202,7 @@ def on_result(data):
 
 @sio.on('lobbyPlayerDrawing')
 def on_lobbyPlayerDrawing(data):
+    global global_counter
     """
     When lobby says that someone is drawing and that one is us, we draw
     """
@@ -209,11 +214,23 @@ def on_lobbyPlayerDrawing(data):
         else:
             strokes = sample_conditional(word)
             draw_strokes(strokes)
+            """Preview actual SVG to compare the drawings:
+            svg_filename = f'{global_counter}.svg'
+            export_svg(strokes, svg_filename=svg_filename)
+            # If using macOS, this opens SVG using Quick Look
+            subprocess.run(['qlmanage', '-p', svg_filename],
+                        check=True,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL)
+            global_counter += 1
+            """
     else:
-        time.sleep(5)
-        sio.emit('chat', 'apple')
-        time.sleep(2)
-        sio.emit('chat', 'bus')
+        if SETTINGS['guess']:
+            time.sleep(5)
+            for category in SETTINGS['categories']:
+                print(category)
+                sio.emit('chat', category)
+                time.sleep(2)
 
 
 def start_server():
@@ -339,6 +356,36 @@ def init_rnn():
                                                     category, scale)
 
 
+def export_svg(data,
+               factor=0.2,
+               svg_filename='/tmp/sketch_rnn/svg/sample.svg'):
+    tf.gfile.MakeDirs(os.path.dirname(svg_filename))
+    min_x, max_x, min_y, max_y = get_bounds(data, factor)
+    dims = (50 + max_x - min_x, 50 + max_y - min_y)
+    dwg = svgwrite.Drawing(svg_filename, size=dims)
+    dwg.add(dwg.rect(insert=(0, 0), size=dims, fill='white'))
+    lift_pen = 1
+    abs_x = 25 - min_x
+    abs_y = 25 - min_y
+    p = "M%s,%s " % (abs_x, abs_y)
+    command = "m"
+    for i in range(len(data)):
+        if (lift_pen == 1):
+            command = "m"
+        elif (command != "l"):
+            command = "l"
+        else:
+            command = ""
+        x = float(data[i, 0]) / factor
+        y = float(data[i, 1]) / factor
+        lift_pen = data[i, 2]
+        p += command + str(x) + "," + str(y) + " "
+    the_color = "black"
+    stroke_width = 1
+    dwg.add(dwg.path(p).stroke(the_color, stroke_width).fill("none"))
+    dwg.save()
+
+
 def sample_conditional(category):
     """Samples a drawing for the given category."""
     def encode(session, eval_model, input_strokes, length):
@@ -351,11 +398,7 @@ def sample_conditional(category):
                                eval_model.sequence_lengths: seq_len
                            })[0]
 
-    def decode(session,
-               eval_model,
-               sample_model,
-               z_input=None,
-               factor=0.2):
+    def decode(session, eval_model, sample_model, z_input=None, factor=0.2):
         z = None
         if z_input is not None:
             z = [z_input]
@@ -386,10 +429,7 @@ def sample_conditional(category):
 
     strokes_in = test_set.random_sample()
     z = encode(global_sess, eval_model, strokes_in, eval_model.hps.max_seq_len)
-    strokes_out = decode(global_sess,
-                         eval_model,
-                         sampling_model,
-                         z)
+    strokes_out = decode(global_sess, eval_model, sampling_model, z)
     return strokes_out
 
 
