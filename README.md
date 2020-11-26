@@ -2,6 +2,8 @@
 
 Stroke-based Skribbl.io bot, powered by [Sketch-RNN](https://github.com/magenta/magenta/tree/master/magenta/models/sketch_rnn). This was forked from [alekxeyuk/Skribbl.io-Bot](https://github.com/alekxeyuk/Skribbl.io-Bot).
 
+This repo contains datasets and pretrained models for **apple**, **bus**, **calculator**, **donut**, **power outlet**, and **table**.
+
 ## Dependencies
 - `Python 3.4` or higher
 - `Asyncio`
