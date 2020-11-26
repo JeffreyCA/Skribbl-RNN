@@ -169,13 +169,16 @@ def on_disconnect():
 
 @sio.on('kicked')
 def on_kicked():
+    global GAME_DATA
     print(
         'You either die a hero or you live long enough to see yourself become the villain'
     )
     GAME_DATA['died'] = True
 
     # Try to reconnect
+    sio.eio.disconnect()
     GAME_DATA = {'connecting': False, 'died': False}
+    time.sleep(2)
     start_server()
 
 
